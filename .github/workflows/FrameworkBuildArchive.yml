@@ -13,13 +13,13 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
 #     - name: Setup NuGet
-#       uses: NuGet/setup-nuget@v1.0.2
+#       uses: NuGet/setup-nuget@v1.0.x
       
-    - name: Navigate to Workspace
-      run: cd $GITHUB_WORKSPACE
+#     - name: Navigate to Workspace
+#       run: cd $GITHUB_WORKSPACE
 
-    - name: Create Build Directory
-      run: mkdir _build
+#     - name: Create Build Directory
+#       run: mkdir _build
       
     - name: Restore Packages
       run: nuget restore WpfAppExpenseIt.sln
