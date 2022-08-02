@@ -29,7 +29,7 @@ jobs:
     - name: Zip Artifact
       uses: vimtor/action-zip@v1
       with:
-        files: dist/ manifest.json
+        files: bin/Release
         dest: WpfAppBundle.zip
         
     - name: Release
