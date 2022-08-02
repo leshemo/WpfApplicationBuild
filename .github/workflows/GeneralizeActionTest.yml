@@ -13,10 +13,10 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
       
     - name: Restore Packages
-      run: nuget restore ?.sln
+      run: nuget restore *.sln
 
     - name: Build Solution
-      run: msbuild.exe ?.sln -t:rebuild -property:Configuration=Release
+      run: msbuild.exe *.sln -t:rebuild -property:Configuration=Release
         
 #     - name: Upload artifact
 #       uses: actions/upload-artifact@v1.0.0
