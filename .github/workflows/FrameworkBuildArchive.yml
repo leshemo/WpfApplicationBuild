@@ -28,3 +28,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: WpfAppBundle
+        tag_name: "1.0.${{github.job}}"
