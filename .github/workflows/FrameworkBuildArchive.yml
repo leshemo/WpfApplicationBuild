@@ -11,15 +11,6 @@ jobs:
     
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
-
-#     - name: Setup NuGet
-#       uses: NuGet/setup-nuget@v1.0.x
-      
-#     - name: Navigate to Workspace
-#       run: cd $GITHUB_WORKSPACE
-
-#     - name: Create Build Directory
-#       run: mkdir _build
       
     - name: Restore Packages
       run: nuget restore WpfAppExpenseIt.sln
@@ -31,4 +22,9 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: WpfAppBundle
-        path: "./bin/Release"        
+        path: "./bin/Release"   
+        
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: WpfAppBundle
