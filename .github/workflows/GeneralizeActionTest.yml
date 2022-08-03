@@ -2,9 +2,12 @@ name: General Build
 
 on: [push]
 
+
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest 
+    env:
+      Version: 34.0.0.0
 
     steps:
     - uses: actions/checkout@v3
@@ -33,6 +36,9 @@ jobs:
         $exeName = $exePath.FullName
         $exeVersion = (Get-Item "${exeName}").VersionInfo.FileVersion
         Pop-Location
+    
+    - name: Assign Version Variable
+      run: $Version = $exeVersion
         
 #     - name: Upload artifact
 #       uses: actions/upload-artifact@v1.0.0
@@ -52,4 +58,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "artifacts.zip"
-        tag_name: $exeVersion}+".${{github.run_number}}"
+        tag_name: "${{env.Version}}.${{github.run_number}}"
