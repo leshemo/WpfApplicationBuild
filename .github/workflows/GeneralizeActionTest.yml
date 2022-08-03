@@ -22,7 +22,7 @@ jobs:
     - name: Powershell actions
       run: |
         $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name
-        $todaysDate = (Get-Date).ToString("yyyy.MM.dd.HHmmss")
+        $todaysDate = (Get-Date).ToUniversalTime().ToString("yyyy.MM.dd.HHmmss")
         $sha = "${{github.sha}}"
         $shortSha = $sha.Substring(0,8)
         $tagNameFull = $todaysDate + "-" + $shortSha
