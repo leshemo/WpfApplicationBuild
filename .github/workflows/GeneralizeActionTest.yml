@@ -28,9 +28,11 @@ jobs:
     - name: Get Version
       shell: pwsh
       run: |
+        $Push-Location ./bin/Release
         $exePath = Get-ChildItem -Path .\ -Filter *.exe | select FullName
         $exeName = $exePath.FullName
         $exeVersion = (Get-Item "${exeName}").VersionInfo.FileVersion
+        $Pop-Location
         
 #     - name: Upload artifact
 #       uses: actions/upload-artifact@v1.0.0
