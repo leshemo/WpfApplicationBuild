@@ -22,10 +22,10 @@ jobs:
     - name: Powershell actions
       run: |
         $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name
-        $todaysDate = (Get-Date).ToString("yyyy.MM.dd")
+        $todaysDate = (Get-Date).ToString("yyyy.MM.dd.HHmmss")
         $sha = "${{github.sha}}"
         $shortSha = $sha.Substring(0,8)
-        $tagNameFull = $todaysDate + "." + $shortSha
+        $tagNameFull = $todaysDate + "-" + $shortSha
         echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       #Building the solution
