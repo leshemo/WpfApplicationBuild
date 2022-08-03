@@ -52,4 +52,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "artifacts.zip"
-        tag_name: "$exeVersion.${{github.run_number}}"
+        tag_name: "${{exeVersion}}.${{github.run_number}}"
