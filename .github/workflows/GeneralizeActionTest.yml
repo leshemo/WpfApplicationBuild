@@ -1,65 +1,45 @@
-name: General Build
+name: Generic Build
 
+#This action runs whenever something is pushed within the repository.
 on: [push]
 
 
 jobs:
-  build:
+  
+  buildAndRelease:
     runs-on: windows-latest 
-    env:
-      Version: 34.0.0.0
 
     steps:
+    
+      #checks the repository out onto the GitHub runner.
     - uses: actions/checkout@v3
     
+      #sets up MSBuild in order to build the repo's sln file.
     - name: Setup MSBuild
       uses: microsoft/setup-msbuild@v1.1
       
-    - name: Run Powershell in-line
+      # all the powershell actions in the script, such as finding the sln file and creating the tag-name for the release.
+    - name: Powershell actions
       run: |
         $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name
-      
-#     - name: Restore Packages
-#       run: nuget restore $slnName
-
-    - name: Build Solution
-      run: msbuild.exe $slnName -t:rebuild -property:Configuration=Release
-      
-      
-#       #get version number
-#     - name: Get Version
-#       run: |
-#         Push-Location ./bin/Release
-#         $exePath = Get-ChildItem -Path .\ -Filter *.exe | select FullName
-#         $exeName = $exePath.FullName
-#         $exeVersion = (Get-Item "${exeName}").VersionInfo.FileVersion
-#         echo "BUILD_VERSION=$exeVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-#         Pop-Location
-    
-#     - name: Assign Version Variable
-#       run: $Version = $exeVersion
-        
-#     - name: Upload artifact
-#       uses: actions/upload-artifact@v1.0.0
-#       with:
-#         name: WpfAppBundle
-#         path: "./bin/Release"  
-    - name: Make tag-name
-      run: |
         $todaysDate = (Get-Date).ToString("yyyy.MM.dd")
         $sha = "${{github.sha}}"
         $shortSha = $sha.Substring(0,8)
         $tagNameFull = $todaysDate + "." + $shortSha
         echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
-# zip up artifact file with action
-    
+      #Building the solution
+    - name: Build Solution
+      run: msbuild.exe $slnName -t:rebuild -property:Configuration=Release
+
+      #Zip up artifact file with action
     - name: Zip Artifact
       uses: vimtor/action-zip@v1
       with:
         files: bin/Release
         dest: artifacts.zip
-        
+    
+      #Using the zip file and tag-name to craft the release.
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
