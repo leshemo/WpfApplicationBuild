@@ -22,6 +22,15 @@ jobs:
 
     - name: Build Solution
       run: msbuild.exe $slnName -t:rebuild -property:Configuration=Release
+      
+      
+      #get version number
+    - name: Get Version
+      shell: pwsh
+      run: |
+        $exePath = Get-ChildItem -Path .\ -Filter *.exe | select FullName
+        $exeName = $exePath.FullName
+        $exeVersion = (Get-Item "${exeName}").VersionInfo.FileVersion
         
 #     - name: Upload artifact
 #       uses: actions/upload-artifact@v1.0.0
@@ -41,4 +50,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "artifacts.zip"
-        tag_name: "1.${{github.run_id}}.${{github.run_number}}"
+        tag_name: "$exeVersion.${{github.run_number}}"
