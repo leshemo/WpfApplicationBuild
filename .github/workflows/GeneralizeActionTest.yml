@@ -35,10 +35,10 @@ jobs:
       uses: vimtor/action-zip@v1
       with:
         files: bin/Release
-        dest: ${{github.event.repository.name}}Bundle.zip
+        dest: artifacts.zip
         
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        files: "${{github.event.repository.name}}Bundle.zip"
+        files: "artifacts.zip"
         tag_name: "1.${{github.run_id}}.${{github.run_number}}"
