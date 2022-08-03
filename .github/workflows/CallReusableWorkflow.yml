@@ -1,0 +1,7 @@
+name: Call the reusable workflow
+
+on: [push]
+
+jobs:
+  call-workflow:
+    uses: ./.github/workflows/ReusableBuildRelease.yml
