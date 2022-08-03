@@ -34,7 +34,7 @@ jobs:
         $exePath = Get-ChildItem -Path .\ -Filter *.exe | select FullName
         $exeName = $exePath.FullName
         $exeVersion = (Get-Item "${exeName}").VersionInfo.FileVersion
-        echo "MY_VARIABLE=$exeVersion" | Out-File -FilePath $Env:Version -Encoding utf8 -Append
+        echo "BUILD_VERSION=$exeVersion" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
         Pop-Location
     
 #     - name: Assign Version Variable
@@ -58,4 +58,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: "artifacts.zip"
-        tag_name: "${{MY_VARIABLE}}.${{github.run_number}}"
+        tag_name: "${{env.BUILD_VERSION}}.${{github.run_number}}"
