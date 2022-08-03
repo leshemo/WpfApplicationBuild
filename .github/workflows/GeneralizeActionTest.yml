@@ -17,8 +17,8 @@ jobs:
       run: |
         $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name
       
-    - name: Restore Packages
-      run: nuget restore $slnName
+#     - name: Restore Packages
+#       run: nuget restore $slnName
 
     - name: Build Solution
       run: msbuild.exe $slnName -t:rebuild -property:Configuration=Release
