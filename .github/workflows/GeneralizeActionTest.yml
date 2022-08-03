@@ -47,7 +47,7 @@ jobs:
     - name: Make tag-name
       run: |
         $todaysDate = (Get-Date).ToString("yyyy.MM.dd")
-        $sha = ${{github.sha}}
+        $sha = "${{github.sha}}"
         $shortSha = $sha.Substring(0,7)
         $tagNameFull = $todaysDate + "." + $shortSha
         echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
