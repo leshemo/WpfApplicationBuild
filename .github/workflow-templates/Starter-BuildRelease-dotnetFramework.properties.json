@@ -1,7 +1,4 @@
 {
     "name": "Build Release for dotNet Framework",
-    "description": "dotNet Framework starter workflow.",
-    "categories": [
-        "C++", "C#"
-    ]
+    "description": "dotNet Framework starter workflow."
 }
