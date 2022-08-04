@@ -42,7 +42,7 @@ jobs:
     - name: Zip Artifact
       uses: vimtor/action-zip@v1
       with:
-        files: ${{ filesToZipLocation }}
+        files: ${{ inputs.filesToZipLocation }}
         dest: artifacts.zip
     
       #Using the zip file and tag-name to craft the release.
