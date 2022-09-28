@@ -38,3 +38,9 @@ jobs:
       #Building the solution
     - name: Build Solution
       run: msbuild.exe "${{ inputs.slnName }}" -t:rebuild -property:Configuration=Release
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifact
+        path: ${{inputs.fileToZipLocation}}
