@@ -1,0 +1,40 @@
+name: Reusable Build and Release
+
+on:
+  workflow_call:
+    inputs:
+      slnName:
+        required: true
+        type: string
+      filesToZipLocation:
+        required: true
+        type: string
+      pickRunner:
+        default: 'windows-latest'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  
+jobs:
+  
+  buildAndRelease:
+    runs-on: ${{inputs.pickRunner}} 
+
+    steps:
+    
+      #checks the repository out onto the GitHub runner.
+    - uses: actions/checkout@v3
+    
+      #sets up MSBuild in order to build the repo's sln file.
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+      #Restore NuGet packages
+    - name: Restore Packages
+      run: nuget restore $slnName
+    
+      #Building the solution
+    - name: Build Solution
+      run: msbuild.exe "${{ inputs.slnName }}" -t:rebuild -property:Configuration=Release
