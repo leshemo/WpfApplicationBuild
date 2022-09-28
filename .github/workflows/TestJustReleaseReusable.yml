@@ -3,9 +3,6 @@ name: Reusable Build and Release
 on:
   workflow_call:
     inputs:
-      filesToZipLocation:
-        required: true
-        type: string
       releaseName:
         required: false
         type: string
@@ -26,6 +23,19 @@ jobs:
     
       #checks the repository out onto the GitHub runner.
     - uses: actions/checkout@v3
+    
+    - name: Download Release Artifacts if Zipped
+      if: inputs.zipFile == 'true'
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifact
+    
+    - name: Download Release Artifacts
+      if: inputs.zipFile == 'false'
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifact
+        path: release/
       
       # all the powershell actions in the script, such as finding the sln file and creating the tag-name for the release.
       # $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name 
@@ -39,14 +49,6 @@ jobs:
         if ($releaseName) {
           $tagNameFull = $releaseName }
         echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
-      
-      #Zip up artifact file with action (default: bin/Release)
-    - name: Zip Artifact
-      if: inputs.zipFile == 'true'
-      uses: vimtor/action-zip@v1
-      with:
-        files: ${{ inputs.filesToZipLocation }}
-        dest: artifacts.zip
     
       #Using the zip file and tag-name to craft the release.
     - name: Release Zipped Artifact
@@ -60,5 +62,5 @@ jobs:
       if: inputs.zipFile == 'false'
       uses: softprops/action-gh-release@v1
       with:
-        files: "${{ inputs.filesToZipLocation }}/*"
+        files: "release/*"
         tag_name: "${{env.TAG_NAME}}"
