@@ -29,6 +29,7 @@ jobs:
       zipFile: false
       
   just-release:
+    needs: just-build
     uses: leshemo/WpfApplicationBuild/.github/workflows/TestJustReleaseReusable.yml@main
     with:
       releaseName: ${{inputs.tagName}}
