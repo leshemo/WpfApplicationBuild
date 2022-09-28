@@ -1,0 +1,64 @@
+name: Reusable Build and Release
+
+on:
+  workflow_call:
+    inputs:
+      filesToZipLocation:
+        required: true
+        type: string
+      releaseName:
+        required: false
+        type: string
+      zipFile:
+        default: 'false'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  
+jobs:
+  
+  buildAndRelease:
+    runs-on: windows-latest 
+
+    steps:
+    
+      #checks the repository out onto the GitHub runner.
+    - uses: actions/checkout@v3
+      
+      # all the powershell actions in the script, such as finding the sln file and creating the tag-name for the release.
+      # $slnName = Get-ChildItem -Path .\ -Filter *.sln -Recurse -File -Name 
+    - name: Powershell actions
+      run: |
+        $todaysDate = (Get-Date).ToUniversalTime().ToString("yyyy.MM.dd.HHmmss")
+        $sha = "${{github.sha}}"
+        $shortSha = $sha.Substring(0,7)
+        $tagNameFull = $todaysDate + "-" + $shortSha
+        $releaseName = "${{inputs.releaseName}}"
+        if ($releaseName) {
+          $tagNameFull = $releaseName }
+        echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+      
+      #Zip up artifact file with action (default: bin/Release)
+    - name: Zip Artifact
+      if: inputs.zipFile == 'true'
+      uses: vimtor/action-zip@v1
+      with:
+        files: ${{ inputs.filesToZipLocation }}
+        dest: artifacts.zip
+    
+      #Using the zip file and tag-name to craft the release.
+    - name: Release Zipped Artifact
+      if: inputs.zipFile == 'true'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "artifacts.zip"
+        tag_name: "${{env.TAG_NAME}}"
+        
+    - name: Release Files
+      if: inputs.zipFile == 'false'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "${{ inputs.filesToZipLocation }}/*"
+        tag_name: "${{env.TAG_NAME}}"
