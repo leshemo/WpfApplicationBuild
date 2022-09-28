@@ -9,12 +9,25 @@ on:
       filesToZipLocation:
         required: true
         type: string
-  
+      pickRunner:
+        default: 'windows-latest'
+        required: false
+        type: string
+      releaseName:
+        required: false
+        type: string
+      zipFile:
+        default: 'false'
+        required: false
+        type: string
+
+permissions:
+  contents: write
   
 jobs:
   
   buildAndRelease:
-    runs-on: windows-latest 
+    runs-on: ${{inputs.pickRunner}} 
 
     steps:
     
@@ -31,23 +44,40 @@ jobs:
       run: |
         $todaysDate = (Get-Date).ToUniversalTime().ToString("yyyy.MM.dd.HHmmss")
         $sha = "${{github.sha}}"
-        $shortSha = $sha.Substring(0,8)
+        $shortSha = $sha.Substring(0,7)
         $tagNameFull = $todaysDate + "-" + $shortSha
+        $releaseName = "${{inputs.releaseName}}"
+        if ($releaseName) {
+          $tagNameFull = $releaseName }
         echo "TAG_NAME=$tagNameFull" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+    
+      #Restore NuGet packages
+    - name: Restore Packages
+      run: nuget restore $slnName
+    
       #Building the solution
     - name: Build Solution
-      run: msbuild.exe ${{ inputs.slnName }} -t:rebuild -property:Configuration=Release
+      run: msbuild.exe "${{ inputs.slnName }}" -t:rebuild -property:Configuration=Release
 
       #Zip up artifact file with action (default: bin/Release)
     - name: Zip Artifact
+      if: inputs.zipFile == 'true'
       uses: vimtor/action-zip@v1
       with:
         files: ${{ inputs.filesToZipLocation }}
         dest: artifacts.zip
     
       #Using the zip file and tag-name to craft the release.
-    - name: Release
+    - name: Release Zipped Artifact
+      if: inputs.zipFile == 'true'
       uses: softprops/action-gh-release@v1
       with:
         files: "artifacts.zip"
+        tag_name: "${{env.TAG_NAME}}"
+        
+    - name: Release Files
+      if: inputs.zipFile == 'false'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: "${{ inputs.filesToZipLocation }}/*"
         tag_name: "${{env.TAG_NAME}}"
