@@ -13,6 +13,10 @@ on:
         default: 'windows-latest'
         required: false
         type: string
+      zipFile:
+        default: 'false'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -39,8 +43,24 @@ jobs:
     - name: Build Solution
       run: msbuild.exe "${{ inputs.slnName }}" -t:rebuild -property:Configuration=Release
       
+      #Zip up artifact file with action (default: bin/Release)
+    - name: Zip Artifact
+      if: inputs.zipFile == 'true'
+      uses: vimtor/action-zip@v1
+      with:
+        files: ${{ inputs.filesToZipLocation }}
+        dest: artifacts.zip
+      
     - name: Upload Artifact
+      if: inputs.zipFile == 'false'
       uses: actions/upload-artifact@v3
       with:
         name: build-artifact
         path: ${{inputs.fileToZipLocation}}
+        
+    - name: Upload Artifact
+      if: inputs.zipFile == 'true'
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifact
+        path: artifacts.zip
