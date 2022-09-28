@@ -1,0 +1,35 @@
+
+#calls the reusable workflow
+name: Call the reusable workflow (Complex)
+
+on:
+  push:
+    branches:
+      - 'main'
+      - 'release/**'
+  workflow_dispatch:
+     inputs:
+          tagName:
+            description: 'Use Tag Name (if blank, will automatically populate)'
+            required: false
+            type: string
+
+permissions:
+  contents: write
+
+jobs:
+  just-build:
+    uses: leshemo/WpfApplicationBuild/.github/workflows/TestJustBuildReusableDotNet.yml@main
+    with:
+      #name of the sln file to build. CHANGE TO project sln file name.
+      slnName: WpfAppExpenseIt.sln
+      #location of the files to be zipped and then released. DEFAULT is bin/Release to just release the artifacts created by the build process.
+      filesToZipLocation: bin/Release
+      pickRunner: windows-2019
+      zipFile: false
+      
+  just-release:
+    uses: leshemo/WpfApplicationBuild/.github/workflows/TestJustReleaseReusable.yml@main
+    with:
+      releaseName: ${{inputs.tagName}}
+      zipFile: false
