@@ -56,9 +56,9 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: build-artifact
-        path: ${{ github.workspace }}/${{inputs.fileToZipLocation}}/
+        path: ${{ github.workspace }}/${{inputs.fileToZipLocation}}
         
-    - name: Upload Artifact
+    - name: Upload Artifact if Zipped
       if: inputs.zipFile == 'true'
       uses: actions/upload-artifact@v3
       with:
