@@ -26,11 +26,11 @@ jobs:
       #location of the files to be zipped and then released. DEFAULT is bin/Release to just release the artifacts created by the build process.
       filesToZipLocation: bin/Release
       pickRunner: windows-2019
-      zipFile: false
+      zipFile: true
       
   just-release:
     needs: just-build
     uses: leshemo/WpfApplicationBuild/.github/workflows/TestJustReleaseReusable.yml@main
     with:
       releaseName: ${{inputs.tagName}}
-      zipFile: false
+      zipFile: true
